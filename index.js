@@ -1,77 +1,35 @@
 var CronJob = require('cron').CronJob;
 var amqp = require('amqplib/callback_api');
 var axios = require('axios');
-var olx = require('./Crawlers/Olx/index.js')
-const sql = require('mssql')
+var olx = require('./Crawlers/HAGELAND_NO/index.js')
 
 
 
-new CronJob('1 */2 * * * *', function () {
-    console.log('Run integration');
-    axios({
-        method: 'post',
-        url: `https://justshare-api-justshare.e4ff.pro-eu-west-1.openshiftapps.com/command`,
-        data: {
-            "action": "syncItemCommand"
-            , "model": {}
-        }
-    }).then(succ3 => {
-        console.log(succ3.data.length)
-        console.log(" [x] RUN SYNC DONE");
+//load categories
+new CronJob(process.env.CRON ? process.env.CRON : '1 1 1 * * *', async function () {
 
-    }, err3 => {
-        console.log(err3);
-    })
+    console.log('run CRON ')
+    try {
+        // make sure that any items are correctly URL encoded in the connection string
 
+        const result = [
+            {
+                source: 'HAGELAND.NO',
+                sitemap: 'https://hageland.no/product_cat-sitemap.xml'
+            }
+        ];
+        let promisesList = result.map(async item => {
 
-
-
-}, null, true, 'America/Los_Angeles');
-
-
-
-/*
-    new CronJob('1 30 1 * * *', async function () {
-
-        try {
-            // make sure that any items are correctly URL encoded in the connection string
-
-            const result = await pool.query`select * from Integration WHERE IsActive=1`;
-            console.dir(result)
-            let promisesList = result.recordset.map(async item => {
-
-                if (item.Name == 'OLX_PL') {
-                    return await olx.load_categories(pool,sql)
-                }
-            });
-            await Promise.all(promisesList)
-        } catch (err) {
-            console.log(err);
-            // ... error checks
-        }
+            if (item.source == 'HAGELAND.NO') {
+                return await olx.load_categories(item)
+            }
+        });
+        await Promise.all(promisesList)
+    } catch (err) {
+        console.log(err);
+        // ... error checks
+    }
 
 
 
-    }, null, true);
-*/
-/*
-    new CronJob('1 1 * * * *', async function () {
-        try {
-            // make sure that any items are correctly URL encoded in the connection string
-            const result = await pool.query`select * from Integration WHERE IsActive=1`;
-            console.dir(result)
-            let promisesList = result.recordset.map(async item => {
-
-                if (item.Name == 'OLX_PL') {
-                    return await olx.start_crawler(pool,sql)
-
-                }
-            });
-            await Promise.all(promisesList)
-        } catch (err) {
-            console.log(err);
-            // ... error checks
-        }
-
-    }, null, true);
-*/
+}, null, true, null, null, process.env.RUN_ON_START ? process.env.RUN_ON_START : true);
