@@ -3,6 +3,7 @@ var amqp = require('amqplib/callback_api');
 var axios = require('axios');
 var hageland = require('./Crawlers/HAGELAND_NO/index.js')
 var blomsterland = require('./Crawlers/BLOMSTERLANDET_SE/index.js')
+var ikea = require('./Crawlers/IKEA/index.js')
 
 var obs = require('./Crawlers/OBS/index.js')
 
@@ -78,6 +79,30 @@ new CronJob(process.env.CRON ? process.env.CRON : '1 1 1 * * *', async function 
         if (result.is_active == true) {
             console.log('start OBS')
             return await obs.load_categories(result)
+        }
+    } catch (err) {
+        console.log(err);
+        // ... error checks
+    }
+}, null, true, null, null, process.env.RUN_ON_START ? process.env.RUN_ON_START : true);
+
+
+
+new CronJob(process.env.CRON ? process.env.CRON : '1 1 1 * * *', async function () {
+
+    console.log('run CRON ')
+    try {
+        // make sure that any items are correctly URL encoded in the connection string
+
+        const result = {
+            source: 'IKEA',
+
+            is_active: process.env.OBS ? process.env.OBS : true
+        }
+
+        if (result.is_active == true) {
+            console.log('start IKEA')
+            return await ikea.load_categories(result)
         }
     } catch (err) {
         console.log(err);
