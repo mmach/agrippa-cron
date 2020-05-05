@@ -6,6 +6,7 @@ var blomsterland = require('./Crawlers/BLOMSTERLANDET_SE/index.js')
 var ikea = require('./Crawlers/IKEA/index.js')
 
 var obs = require('./Crawlers/OBS/index.js')
+var europris = require('./Crawlers/EUROPRIS/index.js')
 
 
 //load categories
@@ -97,12 +98,35 @@ new CronJob(process.env.CRON ? process.env.CRON : '1 1 1 * * *', async function 
         const result = {
             source: 'IKEA',
 
-            is_active: process.env.OBS ? process.env.OBS : true
+            is_active: process.env.IKEA ? process.env.IKEA : true
         }
 
         if (result.is_active == true) {
             console.log('start IKEA')
             return await ikea.load_categories(result)
+        }
+    } catch (err) {
+        console.log(err);
+        // ... error checks
+    }
+}, null, true, null, null, process.env.RUN_ON_START ? process.env.RUN_ON_START : true);
+
+
+new CronJob(process.env.CRON ? process.env.CRON : '1 1 1 * * *', async function () {
+
+    console.log('run CRON ')
+    try {
+        // make sure that any items are correctly URL encoded in the connection string
+
+        const result = {
+            source: 'EUROPRIS',
+
+            is_active: process.env.EUROPRIS ? process.env.EUROPRIS : true
+        }
+
+        if (result.is_active == true) {
+            console.log('start EUROPRIS')
+            return await europris.load_categories(result)
         }
     } catch (err) {
         console.log(err);

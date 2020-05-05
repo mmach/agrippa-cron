@@ -147,7 +147,12 @@ let load_categories = (pool, sql) => {
                         products.forEach(item => {
                             ch.sendToQueue('products-queue', new Buffer(JSON.stringify(item)), { persistent: true });
                         })
+                        setTimeout(() => {
+                            channel.close();
+                            conn.close();
 
+                            //  ch.close();
+                        }, 10000)
                     });
                 })
 

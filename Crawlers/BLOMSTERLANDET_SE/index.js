@@ -100,7 +100,7 @@ let load_categories = (pool, sql) => {
                                     done();
 
                                     //  ch.close();
-                                }, 1000)
+                                }, 10000)
 
                             });
                         })

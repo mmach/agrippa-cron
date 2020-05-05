@@ -52,7 +52,6 @@ let load_categories = (pool, sql) => {
                     )
 
                 });
-
                 amqp.connect(CONN_URL, function (err, conn) {
                     if (err) {
                         console.log("CONNECTION ERROR");
@@ -82,6 +81,7 @@ let load_categories = (pool, sql) => {
 
 
                         category.forEach(item => {
+                            console.log(item);
                             ch.sendToQueue('products-queue', new Buffer(JSON.stringify(item)), { persistent: true });
                         })
                         setTimeout(() => {
@@ -98,14 +98,7 @@ let load_categories = (pool, sql) => {
                 setTimeout(() => {
                     done();
 
-                }, 5000)
-
-
-
-
-
-
-
+                }, 6000)
 
             }
         }
@@ -114,7 +107,7 @@ let load_categories = (pool, sql) => {
 
 
     c_sitemap_categories.queue({
-        uri: "https://www.ikea.com/ie/en/cat/decoration-de001/",
+        uri: "https://www.ikea.com/no/no/cat/decoration-de001/",
         forceUTF8: false,
         headers: {
             "Content-Type": "application/json",
@@ -130,7 +123,7 @@ let load_categories = (pool, sql) => {
 
     })
     c_sitemap_categories.queue({
-        uri: "https://www.ikea.com/ie/en/cat/outdoor-products-od001/",
+        uri: "https://www.ikea.com/no/no/cat/outdoor-products-od001/",
         forceUTF8: false,
         headers: {
             "Content-Type": "application/json",

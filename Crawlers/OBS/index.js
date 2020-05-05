@@ -84,6 +84,8 @@ let load_categories = (pool, sql) => {
                                     })), { persistent: true });
                                 })
                                 setTimeout(() => {
+                                    channel.close();
+                                    conn.close();
                                     done();
 
                                 }, 10000)
