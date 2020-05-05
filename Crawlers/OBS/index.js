@@ -57,8 +57,9 @@ let load_categories = (pool, sql) => {
                                 console.log(err);
                                 setTimeout(() => {
                                     done();
+                                    try{
                                     conn.close();
-
+                                    }catch(er){}
                                 }, 60000)
                                 return;
                             }
@@ -69,6 +70,9 @@ let load_categories = (pool, sql) => {
                                     console.log(err);
                                     setTimeout(() => {
                                         done();
+                                        try{
+                                            conn.close();
+                                            }catch(er){}
                                     }, 60000)
                                     return
 
@@ -84,15 +88,21 @@ let load_categories = (pool, sql) => {
                                     })), { persistent: true });
                                 })
                                 setTimeout(() => {
-                                    channel.close();
-                                    conn.close();
-                                    done();
+                                    try {
+                                        channel.close();
+                                        conn.close();
+                                    } catch (err) {
+                    
+                                    }
 
-                                }, 10000)
+                                }, 5000)
 
                             });
                         })
-
+                        setTimeout(() => {
+                            done();
+        
+                        }, 6000)
 
 
 

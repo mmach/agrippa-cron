@@ -6,19 +6,19 @@ const amqp = require('amqplib/callback_api');
 
 
 let whiteListCategories = [
-'https://hageland.no/merkevare/',
-'https://hageland.no/dyrebutikk/',
-'https://hageland.no/plen/',
-'https://hageland.no/planting-og-stell-i-hagen/',
-'https://hageland.no/hagemobler/',
-'https://hageland.no/dyrk-selv/',
-'https://hageland.no/snittblomster/',
-'https://hageland.no/krukker-og-potter/',
-'https://hageland.no/inneplanter/',
-'https://hageland.no/jord-gjodsel-og-bark/',
-'https://hageland.no/frukt-og-baer/',
-'https://hageland.no/sesongplanter-og-blomster/',
-'https://hageland.no/hageplanter/'
+    'https://hageland.no/merkevare/',
+    'https://hageland.no/dyrebutikk/',
+    'https://hageland.no/plen/',
+    'https://hageland.no/planting-og-stell-i-hagen/',
+    'https://hageland.no/hagemobler/',
+    'https://hageland.no/dyrk-selv/',
+    'https://hageland.no/snittblomster/',
+    'https://hageland.no/krukker-og-potter/',
+    'https://hageland.no/inneplanter/',
+    'https://hageland.no/jord-gjodsel-og-bark/',
+    'https://hageland.no/frukt-og-baer/',
+    'https://hageland.no/sesongplanter-og-blomster/',
+    'https://hageland.no/hageplanter/'
 
 
 
@@ -124,8 +124,9 @@ let load_categories = (pool, sql) => {
                         console.log(err);
                         setTimeout(() => {
                             done();
-                            conn.close();
-
+                            try {
+                                conn.close();
+                            } catch (err) { }
                         }, 60000)
                         return;
                     }
@@ -136,6 +137,9 @@ let load_categories = (pool, sql) => {
                             console.log(err);
                             setTimeout(() => {
                                 done();
+                                try {
+                                    conn.close();
+                                } catch (err) { }
                             }, 60000)
                             return
 
@@ -148,11 +152,12 @@ let load_categories = (pool, sql) => {
                             ch.sendToQueue('products-queue', new Buffer(JSON.stringify(item)), { persistent: true });
                         })
                         setTimeout(() => {
-                            channel.close();
-                            conn.close();
-
+                            try {
+                                channel.close();
+                                conn.close();
+                            } catch (err) { }
                             //  ch.close();
-                        }, 10000)
+                        }, 5000)
                     });
                 })
 

@@ -58,8 +58,9 @@ let load_categories = (pool, sql) => {
                         console.log(err);
                         setTimeout(() => {
                             done();
-                            conn.close();
-
+                            try {
+                                conn.close();
+                            }catch(err){}
                         }, 60000)
                         return;
                     }
@@ -70,6 +71,9 @@ let load_categories = (pool, sql) => {
                             console.log(err);
                             setTimeout(() => {
                                 done();
+                                try {
+                                    conn.close();
+                                } catch (er) { }
                             }, 60000)
                             return
 
@@ -85,11 +89,12 @@ let load_categories = (pool, sql) => {
                             ch.sendToQueue('products-queue', new Buffer(JSON.stringify(item)), { persistent: true });
                         })
                         setTimeout(() => {
+                            try{
                             channel.close();
                             conn.close();
-
+                            }catch(err){}
                             //  ch.close();
-                        }, 1000)
+                        }, 5000)
 
 
                     });

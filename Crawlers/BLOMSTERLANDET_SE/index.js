@@ -41,7 +41,7 @@ let load_categories = (pool, sql) => {
                                 //console.log(item.loc[0])
 
                                 console.log(item.loc[0])
-                                return  item.loc[0]
+                                return item.loc[0]
 
 
 
@@ -70,8 +70,9 @@ let load_categories = (pool, sql) => {
                                 console.log(err);
                                 setTimeout(() => {
                                     done();
-                                    conn.close();
-
+                                    try {
+                                        conn.close();
+                                    } catch (err) { }
                                 }, 60000)
                                 return;
                             }
@@ -82,6 +83,9 @@ let load_categories = (pool, sql) => {
                                     console.log(err);
                                     setTimeout(() => {
                                         done();
+                                        try {
+                                            conn.close();
+                                        } catch (err) { }
                                     }, 60000)
                                     return
 
@@ -95,8 +99,10 @@ let load_categories = (pool, sql) => {
                                 })
                                 await Promise.all(prom);
                                 setTimeout(() => {
-                                    ch.close();
-                                    conn.close();
+                                    try {
+                                        ch.close();
+                                        conn.close();
+                                    } catch (err) { }
                                     done();
 
                                     //  ch.close();
